@@ -1,0 +1,96 @@
+sem sem_grupos[10] = ([10] 0)
+sem sem_tareas[10] = ([10] 0)
+int array_tareas[10] = ([10] 0)
+contador = 1;
+sem mutex = 1;
+sem tarea_lista = 0;
+sem listos = 0;
+int puntaje = 0
+
+int array_puntaje_grupos[10] = ([10] 0)
+
+ColaTareas c[50];
+
+Process Alumno[id:0..49]{
+    Tarea tarea;
+    P(mutex)
+    tarea = elegir()
+    contador = contador + 1
+    if (contador == 50){
+        for j = 1..50 -> V(listos)
+    }
+    V(mutex)
+    P(listos)
+    //hacer tarea
+    P(sem_tareas[tarea.id()]) //deberia hacerlo el profe?
+    array_tareas[tarea.id()] = array_tareas[tarea.id()] + 1 //deberia hacerlo el profe?
+    V(sem_tareas[tarea.id()]) //deberia hacerlo el profe?
+    P(mutex)
+    c.push(tarea)
+    V(mutex)
+    V(tarea_lista)
+    P(sem_grupos[tarea.id()])
+    ver_puntaje(array_puntaje_grupos[tarea.id()])
+
+}
+
+Process Profesor{
+    Tarea tarea;
+    for P=0 to 49{
+        P(tarea_lista)
+        P(mutex)
+        tarea = c.pop()
+        V(mutex)
+        P(sem_tareas[tarea.id()])
+        if (array_tareas[tarea.id()] == 5){
+            V(sem_tareas[tarea.id()])
+            puntaje = puntaje + 1
+            array_puntaje_grupos[tarea.id()] = puntaje
+            for i = 1..5 -> V(sem_grupos[tarea.id()])
+        } else {
+            V(sem_tareas[tarea.id()])
+        }
+    }
+}
+
+//alternativo
+
+int array_puntaje_grupos[10] = ([10] 0)
+
+ColaTareas c[50];
+
+Process Alumno[id:0..49]{
+    Tarea tarea;
+    P(mutex)
+    tarea = elegir()
+    contador = contador + 1
+    if (contador == 50){
+        for j = 1..50 -> V(listos)
+    }
+    V(mutex)
+    P(listos)
+    //hacer tarea
+    P(mutex)
+    c.push(tarea)
+    V(mutex)
+    V(tarea_lista)
+    P(sem_grupos[tarea.id()])
+    ver_puntaje(array_puntaje_grupos[tarea.id()])
+
+}
+
+Process Profesor{
+    Tarea tarea;
+    for P=0 to 49{
+        P(tarea_lista)
+        P(mutex)
+        tarea = c.pop()
+        V(mutex)
+        array_tareas[tarea.id()] = array_tareas[tarea.id()] + 1 
+        if (array_tareas[tarea.id()] == 5){
+            puntaje = puntaje + 1
+            array_puntaje_grupos[tarea.id()] = puntaje
+            for i = 1..5 -> V(sem_grupos[tarea.id()])
+        }
+    }
+}

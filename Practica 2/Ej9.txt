@@ -1,0 +1,61 @@
+ColaMarcos desposito_marcos[30];
+ColaVidrios deposito_vidrios[50];
+
+
+sem mutex_marcos = 1;
+sem mutex_vidrios = 1;
+
+sem SemVidrios = 50;
+sem SemMarcos = 30;
+
+sem MarcosArmador = 0;
+sem VidriosArmador = 0;
+Process Carpintero[id:0..3]{
+    Marco marco;
+    while(true){
+        P(SemMarcos)
+        //hacer marco
+        P(mutex_marcos)
+        desposito_marcos.push(marco);
+        V(mutex_marcos)
+        V(MarcosArmador)
+    }
+
+}
+
+Process Vidriero{
+    Vidrio vidrio;
+    while(true){
+        P(SemVidrios)
+        //hacer vidrio
+        P(mutex_vidrios)
+        deposito_vidrios.push(vidrio);
+        V(mutex_vidrios)
+        V(VidriosArmador)
+    }    
+
+   
+}
+
+Process Armador[id:0..1]{
+    Vidrio vidrio;
+    Marco marco;
+    Vetana ventana;
+    while(true){
+        P(MarcosArmador)
+        P(mutex_marcos)
+        marco = desposito_marcos.pop()
+        V(mutex_marcos)
+        V(SemMarcos)
+
+        P(VidriosArmador)
+        P(mutex_vidrios)
+        vidrio = deposito_vidrios.pop()
+        V(mutex_vidrios)
+        V(SemVidrios)
+
+        //hace ventana
+        //entrega ventana
+
+    }
+}

@@ -1,0 +1,50 @@
+//int piezas = T
+colaPiezas piezas[T];
+sem barreraEmpleados = 0
+contador = 0
+contador_finalizados = 0
+int realizadasEmpleado[E] = ([E] 0)
+sem despertar_empresa = 0;
+sem mutex = 1;
+sem esperar_premio = 0;
+int premio = -1;
+Process Empleado[id:0..E-1]{
+    Pieza pieza;
+    P(mutex)
+    contador ++;
+    if (contador == E){
+        for i = 1 .. E -> V(barreraEmpleados)
+    }
+    V(mutex)
+    P(barreraEmpleados)
+    
+    P(mutex)
+    while (not piezas.empty()){
+        pieza = piezas.pop();
+        V(mutex)
+        //trabajo la pieza
+
+        P(mutex) //o no deberia por ser una posicion que ningun otro va a ocupar?
+        realizadasEmpleado[id] ++;
+        V(mutex) //o no deberia por ser una posicion que ningun otro va a ocupar?
+
+        P(mutex)
+    }
+    V(mutex)
+    P(mutex)
+    contador_finalizados ++;
+    if (contador_finalizados == E){
+        V(despertar_empresa)
+    }
+    V(mutex)
+    P(esperar_premio)
+    if (premio == id){
+        print("God")
+    }
+}
+
+Process Empresa{
+    P(despertar_empresa)
+    premio = realizadasEmpleado.indexOf(contadorEmpleado.max());
+    for j = 1..E -> V(esperar_premio)
+}

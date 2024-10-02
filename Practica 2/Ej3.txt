@@ -1,0 +1,20 @@
+
+colaRecurso c[5];
+
+sem mutex = 1
+Process proceso[id:0..P-1]{
+    Recurso recurso;
+    while(true){
+        P(mutex)
+        if (not c.empty()){
+            recurso = c.pop()
+            V(mutex)
+            //trabajo con recurso...
+            P(mutex)
+            c.push(recurso)
+            V(mutex)
+        } else {
+            V(mutex)
+        }
+    }
+}

@@ -1,0 +1,41 @@
+
+sem atender = 0;
+int contador_espera = 0;
+
+ColaPersonas c;
+sem mutex = 1;
+
+
+sem atendido[50] = ([50] 0)
+
+int personas_id[5] = ([5] 0)
+
+Process Persona[id:0..49]{
+    P(mutex)
+    c.push(persona)
+    contador_espera ++
+    if(contador_espera == 5){
+        V(atender)
+        contador_espera = 0
+    }
+    V(mutex)
+    P(atendido[id])
+
+}
+
+Process Empleado{
+    Persona persona;
+    for i:0..9 {
+        P(atender)
+        for i:0..4{
+            P(mutex)
+            persona = c.pop(); 
+            V(mutex)
+            VacunarPersona(persona)
+            personas_id[i] = persona.id()
+        }
+        for i:0..4{
+            V(atendido[personas_id[i]])
+        }
+    }
+}

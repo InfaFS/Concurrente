@@ -1,0 +1,103 @@
+a)
+
+sem mutex = 1
+
+Process Persona[id:0..N-1]{
+    Documento documento
+    P(mutex)
+    Imprimir(documento)
+    V(mutex)
+}
+
+b)
+
+colaLlegada c;
+sem espera[N] = ([N] 0);
+sem mutex = 1;
+bool libre = true;
+
+Process persona [i:0..N-1]{
+    Documento documento;
+    int aux;
+    P(mutex);
+    if (libre){
+        libre = false;
+        V(mutex);
+    }
+    else {
+        c.push(i);
+        V(mutex);
+        P(espera[i]);
+    }
+    Imprimir(documento);
+    P(mutex);
+    if (c.isEmpty()){
+        libre = true;
+    }
+    else {
+        aux = c.pop();
+        V(espera[aux]);
+    }
+    V(mutex);
+}
+
+c)
+
+
+sem mutex = 1;
+sem espera[N] = ([N] 0);
+//int turno = 0;
+
+Process Persona[id:0..N-1]{
+    Documento documento
+    P(mutex)
+    if (id != 0){ //o podria haber usado el turno
+        V(mutex)
+        P(espera[id])
+    }
+    V(mutex)
+    Imprimir(documento)
+    if(id != N-1){
+        V(espera[id+1])
+    }
+    V(mutex)
+}
+
+d)
+
+colaLlegada c;
+sem espera[N] = ([N] 0);
+sem mutex = 1;
+sem ready = 0;
+sem lleno = 0;
+
+Process persona [i:0..N-1]{
+    Documento documento;
+
+    P(mutex);
+    c.push(i);
+    V(mutex);
+    V(lleno)
+    P(espera[i]);
+    Imprimir(documento);
+    V(ready)
+}
+
+Process Coordinador{
+    int aux;
+    while(true){ // o hacemos for?
+        P(lleno)
+
+        P(mutex);
+        aux = c.pop()
+        V(mutex);
+
+        V(espera[aux])
+
+        P(ready)
+    }
+}
+
+e)
+
+???

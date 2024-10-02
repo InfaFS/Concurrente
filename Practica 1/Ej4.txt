@@ -1,0 +1,34 @@
+
+
+int cola = ...; .//5 elementos
+
+process procesos_operativo[id:0..N-1]{
+	while(true){
+	if(necesito elemento){
+		<await !cola.empty();
+		elemento = cola.get()> --> Casi siempre obtener algo y poner en un objeto compartido se hace entre <> para evitar inconvenientes
+		//hago operaciones --> No seria necesario en principio que las operaciones se hagan en un <> porque ya tiene el elemento nadie se lo puede sacar
+		<cola.add(elemento)> //devuelvo elemento a la cola
+	}
+	}
+	
+}
+
+
+/////////////////
+
+Ej agus
+
+colaRecurso c [5]; cant = 0;
+
+process pSo[id: 0..N-1]{
+    Recurso recurso;
+    while (true){
+        <await (cant < 5);
+        cant++;
+        recurso= c.pop(); >
+        // usa recurso
+        <c.push(recurso); 
+        cant--; >
+    }
+}

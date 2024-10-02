@@ -1,0 +1,37 @@
+
+a-b)
+
+sem mutex = 1
+
+Process Persona[id:0..N-1]
+{
+    P(mutex);
+    --escanear
+    V(mutex);
+}
+
+c)
+
+sem mutex = 3 --> Emula 3 detectores
+
+Process Persona[id:0..N-1]
+{
+    P(mutex);
+    --escanear
+    V(mutex);
+}
+
+d) 
+
+Process Persona[id:0..N-1]
+{
+    while(true){
+        P(mutex);
+        --escanear
+        V(mutex);
+    }
+
+}
+
+
+

@@ -1,0 +1,208 @@
+a)
+
+colaPaquetes c[N];
+
+sem mutex = 1
+
+Process Preparador{
+    Paquete paquete;
+    while(true){
+        paquete = preparar_paquete();
+        P(mutex)
+        if(c.length() == N){
+            V(mutex)
+        } else {
+            c.push(paquete)
+            V(mutex)
+        }
+
+    }
+
+}
+
+
+Process Entregador{
+    Paquete paquete;
+    while(true){
+        P(mutex)
+        if(not c.empty()){
+            paquete = c.pop()
+            V(mutex)
+            enviar_paquete(paquete)
+        } else {
+            V(mutex)
+        }
+
+    }
+
+}
+
+-------------------------
+
+Paquete c[N]; 
+sem vacio = 1; 
+sem lleno = 0;
+
+Process preparador {
+    while (true){
+        //preparar paquete;
+        P(vacio);
+        c.push(paquete);
+        V(lleno);
+    }
+}
+
+Process entregador {
+    while (true){
+        P(lleno);
+        paquete = c.pop();
+        V(vacio);
+        //entregar paquete;
+    }
+}
+
+b)
+
+
+Paquete c[N]; 
+sem vacio = P; 
+sem lleno = 0;
+
+Process preparador[0..P-1] {
+    while (true){
+        //preparar paquete;
+        P(vacio);
+        c.push(paquete);
+        V(lleno);
+    }
+}
+
+Process entregador {
+    while (true){
+        P(lleno);
+        paquete = c.pop();
+        V(vacio);
+        //entregar paquete;
+    }
+}
+
+---------------------
+
+Paquete c[N];
+sem vacio = 1;
+sem lleno = 0;
+sem mutexP = 1;
+
+Process preparador[i:0..P-1] {
+    while (true){
+        //preparar paquete;
+        P(vacio);
+        P(mutexP);
+        c.push(paquete);
+        V(mutexP);
+        V(lleno);
+    }
+}
+
+Process entregador {
+    while (true){
+        P(lleno);
+        paquete = c.pop();
+        V(vacio);
+        //entregar paquete;
+    }
+}
+
+c)
+
+
+Paquete c[N];
+sem vacio = 1;
+sem lleno = 0;
+sem mutexE = 1;
+Process preparador[i:0..P-1] {
+    while (true){
+        //preparar paquete;
+        P(vacio);
+        c.push(paquete);
+        V(lleno);
+    }
+}
+
+Process entregador {
+    while (true){
+        P(lleno);
+        P(mutexE)
+        paquete = c.pop();
+        V(mutexE)
+        V(vacio);
+        //entregar paquete;
+    }
+}
+
+d)
+
+Paquete c[N];
+sem vacio = 1;
+sem lleno = 0;
+sem mutexP = 1;
+sem mutexE = 1;
+Process preparador[i:0..P-1] {
+    while (true){
+        //preparar paquete;
+        P(vacio);
+        P(mutexP)
+        c.push(paquete);
+        V(mutexP)
+        V(lleno);
+    }
+}
+
+Process entregador {
+    while (true){
+        P(lleno);
+        P(mutexE)
+        paquete = c.pop();
+        V(mutexE)
+        V(vacio);
+        //entregar paquete;
+    }
+}
+
+
+
+
+
+a)
+
+
+colaPaquetes c;
+sem entregador = 0
+sem preparador = N
+sem mutex = 1
+
+Process Preparador{
+    Paquete paquete;
+    while(true){
+        P(preparador)
+        paquete = preparar_paquete();
+        P(mutex)
+        c.push(paquete)
+        --- deberia ir aca el V(entregador)?
+        V(mutex)
+        --- deberia ir aca el V(entregador)?
+    }
+}
+
+
+Process Entregador{
+    Paquete paquete;
+    while(true){
+        P(entregador)
+        P(mutex)
+        paquete = c.pop()
+        --- deberia ir aca el V(entregador)?
+        V(mutex)
+        --- deberia ir aca el V(entregador)?
+    }
+}

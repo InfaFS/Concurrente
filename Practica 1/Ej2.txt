@@ -1,0 +1,8 @@
+
+int total = 0; int v[M] = ...; int N = ...;
+
+process recorredor[id: 0..M-1]{
+    if (v[id] == N){
+        <total := total + 1 ;>
+    }
+}

@@ -1,0 +1,107 @@
+
+b)
+
+int cant = 0; int pri_vacia = 0; int pri_ocupada = 0; int buffer[N];
+
+process productor[id:0..P-1]{
+    while (true){
+        // producir elemento
+        <await (cant < N); cant++;
+        buffer[pri] = elemento;
+        pri_vacia = (pri_vacia + 1) mod N;> --> Incluimos a esta operacion dentro de los <> porque puede pasar que otro proceso P quiera afectar esa variable al mismo tiempo
+    }
+}
+
+process consumidor[id:0..C-1]{ 
+    while (true) { 
+        <await (cant > 0); cant-- 
+        elemento = buffer[pri];
+        pri_ocupada = (pri_ocupada + 1) mod N;> --> Incluimos a esta operacion dentro de los <> porque puede pasar que otro proceso C quiera afectar esa variable al mismo tiempo
+        //consume elemento
+    }
+}
+
+
+a) 
+
+process Persona[id:0..N-1]{
+	Documento documento;
+	<await Imprimir(documento); //agarrar impresion>
+}
+
+b).1
+
+colaPersonas p[N];
+
+process Persona[id:0..N-1]{
+	Documento documento;	
+	<colaPersonas.push(id)>
+	<await colaPersonas.getPrimero() == id; colaPersonas.pop()
+	await Imprimir(documento); 
+	//agarrar impresion;
+	>
+	
+}
+
+b).2
+
+
+colaPersonas p[N];
+
+process Persona[id:0..N-1]{
+	Documento documento;
+	<colaPersonas.push(id)>
+	<await colaPersonas.getPrimero() == id > 
+	Imprimir(documento); --> Preguntar si aca sucede lo mismo que en los de grado fino que pueden hacerse cualquier operacion
+	//agarrar impresion;
+	colaPersonas.pop()
+	
+}
+
+
+c)
+
+process Persona[id:0..N-1]{
+	Documento documento;
+	<colaPersonas.push(id)>	
+	<await colaPersonas.getMin() > id;
+	Imprimir(documento); 
+	//agarrar impression
+	colaPersonas.pop()
+	>
+
+	
+}
+
+
+
+
+d)
+
+colaPersonas p[N]; listo = false; turno = -1
+
+process Persona[id:0..N-1]{
+	Documento documento;	
+	<colaPersonas.push(id)>
+	<await id = turno; colaPersonas.pop()
+	Imprimir(documento); 
+	//agarrar impresion;
+	>
+	listo = true
+	
+}
+
+process Cordinador{
+
+	while(true){
+	
+	turno = colaPersonas.getPrimero();
+	<await listo;>
+	listo = false;
+
+	}
+
+}
+
+DUDAS: -Se hacen las cosas en orden o en cualquiera?
+       -Los <> solo previenen que se haga una operacion superpuesta pero no que se haga primero?

@@ -1,0 +1,61 @@
+a)
+
+process persona[id: 0..N-1] {
+    Documento documento;
+    <imprimir(documento); >
+}
+
+b)
+
+int numero = 0; int proximo = 0; array[0..N-1] = ([n] = 0); //implementa algoritmo ticket
+
+process persona[i:0..N-1]{
+    Documento documento;
+    <turno[i] = numero; numero + 1; >
+    <await turno[i] == proximo; >
+    imprimir(documento);
+    proximo = proximo + 1;
+}
+
+c)
+
+colaProcesos c; int siguiente = -1; //aplica el algoritmo de cola
+
+process persona[i:0..N-1]{
+    Documento documento;
+    <if (siguiente == -1){
+        siguiente = i;
+    } 
+    else {
+        agregar(c, i); 
+    }>
+    <await (siguiente == i)>
+    imprimir(documento);
+    <if (c.isEmpty()){
+        siguiente = -1;
+    }
+    else {
+        siguiente = sacar(c);
+    }>
+}
+
+
+d)
+
+int numero = 0; int actual = -1; array[0..N-1] = ([n] = 0);  bool listo = false; //Aplica algoritmo ejemplo 3, coordinador
+
+process persona[i:0..N-1]{
+    Documento documento;
+    <turno[i] = numero; numero + 1; >
+    <await turno[i] == actual ; >
+    imprimir(documento);
+    listo = true;
+}
+
+process coordinador{
+    for j = 0..n-1 {
+        actual = j;
+        <await listo;>
+        listo = false;
+    }
+}

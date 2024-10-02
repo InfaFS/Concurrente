@@ -1,0 +1,59 @@
+a)
+
+
+sem Mutex = 1;
+sem llenoPuestos[3] = ([3] 0)
+sem semEnviarAPuesto[3] = ([3] 150)
+ColaPasajeros c;
+ColaPasajeros colas[3];
+sem MutexColas[3] = ([3] 1)
+
+sem hayPasajero = 0;
+
+sem Recepcionados[N] = ([N] 0)
+sem Hisopados[N] = ([N] 0)
+
+
+Process Recepcionista{
+    int puesto,pasajero;
+    for i:0..N-1{
+        P(hayPasajero)
+        P(mutex)
+        pasajero = c.pop()
+        V(mutex)
+        puesto = minContadores() //me da que puesto tiene menos gente
+
+        P(MutexColas[id])
+        colas[puesto].push(pasajero)
+        V(MutexColas[id])
+
+        P(semEnviarAPuesto[puesto])
+        V(llenoPuestos[puesto])
+        V(Recepcionados[pasajero.id()])
+    }
+}
+
+Process Pasajeros[id:0..N-1]{
+    P(mutex)
+    c.push(id)
+    V(hayPasajero)
+    V(mutex)
+    P(Recepcionados[id])
+    P(Hisopados[id])
+    //se retira
+}
+
+Process Enfermera[id:0..2]{
+    Pasajero pasajero;
+    P(llenoPuestos[id])
+    while(true){
+        P(MutexColas[id])
+        pasajero = colas[id].pop()
+        V(MutexColas[id])
+        Hisopar(pasajero)
+        V(Hisopados[pasajero.id()])
+        V(semEnviarAPuesto[id])
+        P(llenoPuestos[id])
+    }
+
+}

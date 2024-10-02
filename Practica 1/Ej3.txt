@@ -1,0 +1,48 @@
+Ej3:
+
+a)
+
+int cant = 0; int pri_vacia = 0; int pri_ocupada = 0; int buffer[N];
+
+process productor {
+    while (true){
+        // producir elemento
+        <await (cant < N); cant++;
+        buffer[pri] = elemento;> --> Encerramos al buffer ya que es un elemento compartido, por ende puede pasar que el consumidor quiera agarrar algo que todavia no fue cargado
+        pri_vacia = (pri_vacia + 1) mod N; --> No hay problema con esta parte porque esa variable solo es afectada por un proceso
+    }
+}
+
+process consumidor{ 
+    while (true) { 
+        <await (cant > 0); cant-- 
+        elemento = buffer[pri];>
+        pri_ocupada = (pri_ocupada + 1) mod N; --> No hay problema con esta parte porque esa variable solo es afectada por un proceso
+        //consume elemento
+    }
+}
+
+
+----------------
+
+b)
+
+int cant = 0; int pri_vacia = 0; int pri_ocupada = 0; int buffer[N];
+
+process productor[id:0..P-1]{
+    while (true){
+        // producir elemento
+        <await (cant < N); cant++;
+        buffer[pri] = elemento;
+        pri_vacia = (pri_vacia + 1) mod N;> --> Incluimos a esta operacion dentro de los <> porque puede pasar que otro proceso P quiera afectar esa variable al mismo tiempo
+    }
+}
+
+process consumidor[id:0..C-1]{ 
+    while (true) { 
+        <await (cant > 0); cant-- 
+        elemento = buffer[pri];
+        pri_ocupada = (pri_ocupada + 1) mod N;> --> Incluimos a esta operacion dentro de los <> porque puede pasar que otro proceso C quiera afectar esa variable al mismo tiempo
+        //consume elemento
+    }
+}

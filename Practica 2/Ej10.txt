@@ -1,0 +1,24 @@
+b)
+
+sem camiones = 7;
+sem trigo = 5;
+sem maiz = 5;
+
+Process camionTrigo[i:0..T-1]{
+    P(trigo);
+    P(camiones);
+    //descargar trigo
+    V(camiones);
+    V(trigo);
+}
+
+Process camionMaiz[i:0..M-1]{
+    P(maiz);
+    P(camiones);
+    //descargar maiz
+    V(camiones);
+    V(maiz);
+}
+
+a) ...
+

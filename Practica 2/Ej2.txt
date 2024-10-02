@@ -1,0 +1,103 @@
+a)
+
+fallos[N]:([N] ID,gravedad)
+
+Sem mutex = 1
+
+Process Control[id:0..3]
+    {
+        for [i:0..N-1]{
+            P(mutex)
+            if(fallos[i].gravedad == 3){
+                print(fallos[i].ID)
+            }
+            V(mutex)
+
+        }
+
+    }
+
+-----------------------
+
+colaFallos c[N];
+
+Sem mutex = 1;
+
+Process Control[id:0..3]
+    {
+        Fallo fallo;
+        int nivel;
+        P(mutex)
+        while (not c.empty()){
+            fallo = c.pop();
+            V(mutex)
+            nivel = fallo.getNivel();
+            if (nivel == 3){
+                print(fallo.getID());
+            }
+            P(mutex)            
+        }
+        V(mutex)
+    }
+
+b)
+
+colaFallos c[N];
+int contadorFallos[4] = ([4] 0)
+Sem mutex = 1;
+sem semNivel[4] = ([4] 1);
+
+Process Control[id:0..3]
+    {
+        Fallo fallo;
+        int nivel;
+        P(mutex)
+        while (not c.empty()){
+            fallo = c.pop();
+            V(mutex)
+            nivel = fallo.getNivel();
+            if (nivel == 3){
+                print(fallo.getID());
+            }
+            P(semNivel[nivel])
+            contadorFallos[nivel]+=1
+            V(semNivel(nivel))
+            P(mutex)            
+        }
+        V(mutex)
+    }
+
+c)
+
+
+colaFallos c[N];
+int contadorFallos[4] = ([4] 0)
+Sem mutex = 1;
+
+Process Control[id:0..3]
+    {
+        Fallo fallo;
+        int nivel;
+        P(mutex)
+        while (not c.empty()){
+            fallo = c.pop();
+            V(mutex)
+            nivel = fallo.getNivel();
+            if (nivel == 3){
+                print(fallo.getID());
+            }
+            if (nivel == id){
+                contadorFallos[nivel]+=1
+            } else {
+                P(mutex)
+                c.push(fallo)
+                V(mutex)
+            }
+   
+            P(mutex)            
+        }
+        V(mutex)
+    }
+
+//Podria darse un caso donde se vacie la cola pero hayan llegado al else 2 procesos y no se contabilice algo en el contador?
+
