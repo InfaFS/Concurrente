@@ -14,12 +14,13 @@ Monitor Equipo[id:0..4]{
 		}
 	}
 
-	Procedure terminar(vendido: out int){
+	Procedure terminar(sumaVendido: in int,vendido: out int){
 		equipoArribados++;
+		totalVendido += sumaVendido; //hay que poner los valores que se van sumando a medida que llegan, sino va a devolver 0
 		if (equipoArribados < 4){
 			wait(espera)
 		} else {
-			signal_all(espera)1
+			signal_all(espera)
 		}
 		vendido = totalVendido;
 	}
