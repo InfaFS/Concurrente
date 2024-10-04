@@ -108,7 +108,6 @@ Process vehiculo[id=0..149]{
 	estacion = estacionAsignada[id]
 	
 	P(mutex_colaLlegadaEstacion[estacion])
-	vehiculosPorEstacion[estacion]++
 	colaLlegadaEstacion[estacion].push(id)
 	V(mutex_colaLlegadaEstacion[estacion])
 
