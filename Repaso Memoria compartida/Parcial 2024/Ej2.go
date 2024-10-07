@@ -1,17 +1,16 @@
 
 Monitor Oficina {
-	txt resultado
+	txt resultados[N-1]
 	cond cv
 	int esperando = 0
 	cond Empleado
 	cola colaSolicitudes;
 
-	Procedure llegada(solicitud: in txt,resultadoTramite: out txt){
+	Procedure llegada(solicitud: in txt,resultadoTramite: out txt,idPersona: in int){
 		esperando++
-		colaSolicitudes.push(solicitud)
-		signal(Empleado)
+		colaSolicitudes.push(solicitud,idPersona)
 		wait(cv)
-		resultadoTramite = resultado
+		resultadoTramite = resultados[idPersona]
 	}
 
 	Procedure chequearPersonas(libre: out boolean){
@@ -23,13 +22,13 @@ Monitor Oficina {
 
 	}
 
-	Procedure atenderPersona(solicitud: out txt){
-		solicitud = colaSolicitudes.pop()
+	Procedure atenderPersona(solicitud: out txt,idPersona: out int){
+		solicitud,id = colaSolicitudes.pop()
 		esperando --
 	}
 
-	Procedure entregarResultado(resultado: in txt){
-		resultadoTramite = resultado
+	Procedure entregarResultado(resultado: in txt,idPersona: in int){
+		resultados[idPersona] = resultado
 		signal(cv)
 	}
 
@@ -45,15 +44,16 @@ Process Personas[id=0..N-1]{
 Process Empleado{
 	boolean libre;
 	txt solicitud,resultado
+	int id;
 	for id=0..N-1{
 		Oficina.chequearPersonas(libre)
 		while(libre = true){
 			delay(600000)
 			Oficina.chequearPersonas(libre)
 		}
-		Oficina.atenderPersona(solicitud)
+		Oficina.atenderPersona(solicitud,id)
 		resultado = resolverTramite(solicitud)
-		Oficina.entregarResultado(resultado)
+		Oficina.entregarResultado(resultado,id)
 
 	}
 
