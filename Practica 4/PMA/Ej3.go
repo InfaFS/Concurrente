@@ -12,3 +12,47 @@ Empleado -> manda pedido al coordinador, se queda en el receive, si obtiene un p
 Cocinero -> esta todo el tiempo en un receive con el channel que tiene el id de la persona y el pedido, lo hace y se lo da en su channel privado a cada persona
 
 */
+
+//Variables
+chan enviarPedido(int,txt)
+chan pedidoListo[C] (txt)
+chan pedidoEmpleado (int)
+chan enviarPedidoEmpleado[3] (int,txt)
+chan pedidosCocineros (txt)
+
+Process Cliente[id:0..C-1]{
+	send enviarPedido(id,pedido);
+	receive pedidoListo[id](pedido_cocinado);
+
+}
+
+Process Admin{
+	while(true){
+		receive pedidoEmpleado(idE)
+		if(!empty(enviarPedido)){
+			receive enviarPedido(idCliente,pedidoCliente)
+			send enviarPedidoEmpleado[idE](idCliente,pedidoCliente)
+		} else {
+			send enviarPedidoEmpleado[idE](-1,null)
+		}
+	}
+}
+
+Process Empleado[id:0..2]{
+	while(true){
+		send pedidoEmpleado(id)
+		receive enviarPedidoEmpleado[id] (idCliente,pedidoCliente)
+		if (idCliente <> -1){
+			send pedidosCocineros(idCliente,pedidoCliente)
+		} else {
+			delay(random(1..3))
+		}
+
+	}
+}
+
+Process Cocinero[id:0..1]{
+	receive pedidosCocineros(idCliente,pedidoCliente)
+	//hace el pedido
+	send pedidoListo[idCliente] (pedidoCliente)
+}
