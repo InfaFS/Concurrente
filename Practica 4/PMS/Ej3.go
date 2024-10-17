@@ -34,7 +34,7 @@ Process alumnos[id:0..N-1]{
 	int nota;
 	examen = resolverExamen()
 	admin!recibirExamen(examen,id);
-	profesor?recibirNota(nota)
+	profesor[*]?recibirNota(nota)
 }
 
 Process admin{
@@ -43,7 +43,7 @@ Process admin{
 	int contador = N
 	do alumnos[*]?recibirExamen(examen) -> push(Fila,examen,id);
 	[] !empty(Fila) and contador > 0;profesor[*]?pedirExamen(idProf) -> contador--; profesorEnviarExamen[idProf]!(Fila.pop());
-	[] contador == 0;profesor[*]?pedirExamen(idProf) -> profesorEnviarExamen[idProf]!("FINALIZADO");
+	[] contador == 0;profesor[*]?pedirExamen(idProf) -> profesorEnviarExamen[idProf]!("FINALIZADO",-1);
 	od
 }
 
@@ -67,7 +67,8 @@ Process alumnos[id:0..N-1]{
 	text examen;
 	int nota;
 	admin!llegue()
-	admin?comenzar()
+	//IMPORTANTE
+	admin!comenzar() //Aca al ser sincronico va a esperar hasta que se reciba el mensaje, por ende se maximiza la concurrencia!
 	examen = resolverExamen()
 	admin!recibirExamen(examen,id);
 	profesor?recibirNota(nota)
@@ -80,7 +81,7 @@ Process admin{
 
 	for i = 0..N-1 -> alumnos[*]?llegue();
 
-	for i = 0..N-1 -> alumnos[i]!comenzar();
+	for i = 0..N-1 -> alumnos[*]?comenzar(); //No mando una senial, sino simplemente recibo
 
 	do alumnos[*]?recibirExamen(examen) -> push(Fila,examen,id);
 	[] !empty(Fila) and contador > 0;profesor[*]?pedirExamen(idProf) -> contador--; profesorEnviarExamen[idProf]!(Fila.pop());
