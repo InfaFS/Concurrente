@@ -3,6 +3,7 @@ with Ada.Text_IO; use Ada.Text_IO;
 
 procedure Ej6 is
 
+    --Workers le avisan que tienen que realizar un calculo
     Task type Worker is
         Entry realizarCalculo();
     End Worker;
@@ -14,21 +15,8 @@ procedure Ej6 is
 
  
 
-    arrWorkers: array(1..20) of Worker;
+    arrWorkers: array(1..10) of Worker;
 
-    --Jugador
-    Task Body Jugador is
-        IDEquipo: integer := ?;
-        SumaMonedas: integer := 0;
-    begin 
-        arrEquipos(IDEquipo).Llegada(); --Le envian al equipo correspondiente que llegaron y espoeran a que les haya atendido
-        arrEquipos(IDEquipo).Empezar(); --Esperan a que les atiendan el empezar
-        for I in 1 .. 15 loop
-            SumaMonedas := SumaMonedas + Moneda(); --Realiza la suma de las monedas
-        end loop
-        arrEquipos(IDEquipo).Juntado(SumaMonedas); --Le manda lo juntado al equipo 
-        accept EquipoGanador(IDEquipo: IN integer); --Se queda esperando a que le manden el resultado;
-    End Jugador;
     
     --Workers
     Task body Worker is
@@ -50,11 +38,12 @@ procedure Ej6 is
     Task Body Admin is
         PromedioTotal: integer := 0;
     begin
-        for I in 1 .. 20 loop
+        delay ?;
+        for I in 1 .. 10 loop
             arrWorkers(I).realizarCalculo();
         end loop;
 
-        for I in 1 .. 20 loop
+        for I in 1 .. 10 loop
             accept PromedioEntrante (PromedioWorker: IN real) do
                 PromedioTotal := PromedioTotal + PromedioWorker;
             end PromedioEntrante;
@@ -62,7 +51,5 @@ procedure Ej6 is
     End Admin;
 
 begin
-    for I in 1..5loop
-        arrEquipos(I).RecibirId(I); --LE DA A CADA UNO EL ID
-    end loop;
+    null;
 end Ej6;
