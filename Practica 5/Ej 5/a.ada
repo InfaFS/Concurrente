@@ -61,7 +61,7 @@ procedure Ej5 is
             end Juntado;
         end loop;
 
-        Admin.SumaEquipo(IDEquipo,SumaTotalEquipo);
+        Admin.SumaEquipo(IDEquipo,SumaTotalEquipo);  --Le manda al admin que ya tiene la suma junto con su id
     End Empleado;
 
 
@@ -71,26 +71,26 @@ procedure Ej5 is
         EquipoGanador: integer := -1;
     begin
         for I in 1 .. 5 loop
-            accept SumaEquipo(IDEquipo: IN integer,SumaEquipo: IN integer) do
+            accept SumaEquipo(IDEquipo: IN integer,SumaEquipo: IN integer) do --Recibe la suma de los 5 equipos y los guarda en un array
                 arrSumaEquipos(IDEquipo) := SumaEquipo;
             end Juntado;  
         end loop;   
 
         for I in 1 .. 5 loop
-            if (arrSumaEquipos(I) > sumaMaxima) then
+            if (arrSumaEquipos(I) > sumaMaxima) then --Se fija cual es el que tiene mas monedas
                 EquipoGanador := I;
                 sumaMaxima := arrSumaEquipos(I);
             end if
         end loop;  
         
         for I in 1..20 loop
-            arrJugadores(I).EquipoGanador(EquipoGanador);
+            arrJugadores(I).EquipoGanador(EquipoGanador); --Le informa a cada usuario cual fue el equipo ganador
         end loop;
 
     End Admin;
 
 begin
     for I in 1..5loop
-        arrEquipos(I).RecibirId(I);
+        arrEquipos(I).RecibirId(I); --LE DA A CADA UNO EL ID
     end loop;
 end Ej2;
