@@ -51,15 +51,18 @@ procedure Ej4 is
     begin
         loop
             SELECT
-            accept PedidoEnfermo(S: IN Solicitud, R: OUT Diagnostico) do
-                R := resolverEnfermedad(S);
-            end PedidoEnfermo;
+                accept PedidoEnfermo(S: IN Solicitud, R: OUT Diagnostico) do
+                    R := resolverEnfermedad(S);
+                end PedidoEnfermo;
             OR
                 when(PedidoEnfermo'count = 0) =>
                     accept PedidoEnfermera(S: IN Solicitud);
-            OR
-                when(PedidoEnfermo'Count = 0 and PedidoEnfermera = 0) => 
-                    accept PedidosEscritorio(S: IN Solicitud);
+            ELSE
+                SELECT
+                    AdminEscritorio.PedidoMedico(Solicitud);
+                ELSE
+                    null;
+                END SELECT;
             END SELECT;
         end loop;
     End Medico;
@@ -75,8 +78,10 @@ procedure Ej4 is
                     arrSolicitudes.push(S);
                 end NotaEscritorio;
             OR
-                when(NotaEscritorio'count = 0) =>
-                    Medico.PedidosEscritorio(arrSolicitudes.pop());
+                when(arrSolicitudes.len() > 0)
+                    accept PedidoMedico(S: OUT Solicitud )do
+                        S:=arrSolicitudes.pop()
+                    end;
             END SELECT;
         end loop;
     End AdminEscritorio;
@@ -87,7 +92,7 @@ procedure Ej4 is
         loop
             SELECT
                 medico.PedidoEnfermera(Solicitud);
-            OR DELAY 0.0;
+            ELSE
                 AdminEscritorio.NotaEscritorio(Solicitud);
             END SELECT;
         end loop;

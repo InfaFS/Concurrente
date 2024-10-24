@@ -3,9 +3,7 @@ with Ada.Text_IO; use Ada.Text_IO;
 
 procedure Ej5 is
     -- Definicion de Jugador
-    Task type Jugador is
-        Entry EquipoGanador(IDEquipo: IN integer);
-    end Jugador;
+    Task type Jugador;
 
     --Definicion de Equipo
     Task type Equipo is
@@ -18,6 +16,7 @@ procedure Ej5 is
     --Definicion del admin que ve todo 
     Task Admin is
         Entry SumaEquipo(IDEquipo: IN integer; SumaEquipo: IN integer );
+        Entry EquipoGanador(IDEquipo: OUT integer);
     End Admin;
 
     arrEquipos: array(1..5) of Equipo;
@@ -35,7 +34,9 @@ procedure Ej5 is
             SumaMonedas := SumaMonedas + Moneda(); --Realiza la suma de las monedas
         end loop
         arrEquipos(IDEquipo).Juntado(SumaMonedas); --Le manda lo juntado al equipo 
-        accept EquipoGanador(IDEquipo: IN integer); --Se queda esperando a que le manden el resultado;
+        --accept EquipoGanador(IDEquipo: IN integer); --Se queda esperando a que le manden el resultado--
+        --Estaria mal que acepte asi que le voy a pedir que me lo pase
+        Admin.EquipoGanador(IDEquipo); --Recibo el id del equipo ganador 
     End Jugador;
     
     --Equipos
@@ -83,9 +84,15 @@ procedure Ej5 is
             end if
         end loop;  
         
+        --Vamos a hacer que sea un accept, ya que estoy estableciendo un orden secuencial y no esta bien
+        -- for I in 1..20 loop
+        --     arrJugadores(I).EquipoGanador(EquipoGanador); --Le informa a cada usuario cual fue el equipo ganador
+        -- end loop;
+
         for I in 1..20 loop
-            arrJugadores(I).EquipoGanador(EquipoGanador); --Le informa a cada usuario cual fue el equipo ganador
-        end loop;
+            accept EquipoGanador(IDEquipo: OUT integer) do
+                IDEquipo := EquipoGanador 
+            end EquipoGanador;
 
     End Admin;
 

@@ -15,7 +15,7 @@ procedure Ej2 is
     Task Body Cliente is
         Resultado: texto;
     begin
-        Empleado.Pedido("datos",Resultado);
+        Empleado.Pedido("datos",Resultado); --Hasta que no tenga algo en reusltado no se va
         Put_Line("Recibi la respuesta, me marcho");
     End Cliente;
 

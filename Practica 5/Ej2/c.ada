@@ -18,7 +18,7 @@ procedure Ej2 is
         SELECT
             Empleado.Pedido("datos",Resultado);
             Put_Line("Recibi la respuesta, me marcho");
-        OR 
+        ELSE
             Put_Line("No me atendieron al instante,me marcho");
         END SELECT;
     End Cliente;

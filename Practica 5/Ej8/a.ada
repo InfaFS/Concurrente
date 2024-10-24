@@ -4,6 +4,7 @@ procedure Ej8 is
     --Workers le avisan que tienen que realizar un calculo
     Task type Cliente is
         Entry Atendido();
+        Entry RecibirID(IDCliente: IN integer);
     End Cliente;
 
     --Definicion del admin que avisa
@@ -23,11 +24,17 @@ procedure Ej8 is
     
     --Clientes
     Task Body Cliente is
-
+        MID: integer := 0;
     begin
+        --voy a recibir el id del main
+        accept RecibirID(IDCliente: IN Integer) do
+            MID:=IDCliente;
+        end RecibirID;
+
+        
         while not atendido loop
+        admin.hacerReclamo(MID);
             SELECT
-                admin.PedidoCliente();
                 accept Atendido() do
                     atendido := true;
                 end Atendido;
@@ -40,24 +47,22 @@ procedure Ej8 is
 
     --Admin
     Task Body Admin is
-
+    arrReclamos: array (1..P) of integer;
     begin
         loop
             SELECT
-                accept PedidoCamion(IDCliente : OUT integer) do
-                    --se fija cual es el cliente que mas pedidos tiene, lo haria con un count de entries pero no se como hacerlo en este caso
-                    IDCliente := clienteMasPedidos;
-                end PedidoCamion;
-            OR --Aca se quedaria tildado si por ejemplo ningun camion fue a buscar un pedido
-                when (LlegadaCamion'count > 0) =>
-                    accept LlegadaCamion(IDCliente: IN integer) do
-                        clienteAtender := IDCliente;
-                    end LlegadaCamion;
-                    --acepta el pedido del cliente
-                    arrCliente(IDCliente).Atendido()
+                when arrReclamos.notEmpty() =>
+                    accept PedidoCamion(IDCliente : OUT integer) do
+                        --se fija cual es el cliente que mas pedidos tiene, lo haria con un count de entries pero no se como hacerlo en este caso
+                        IDCliente_Temp := max(arrReclamos);
+                        arrReclamos[IDCliente_Temp] := 0;
+                        IDCliente := IDCliente_Temp;
+                    end PedidoCamion;
+            OR
+                accept hacerReclamo(IDCliente : IN integer) do
+                    arrReclamos[IDCliente]++;
+                end hacerReclamo;
             END SELECT;
-
-
         end loop 
       
     End Admin;
@@ -68,13 +73,13 @@ procedure Ej8 is
         loop
         admin.PedidoCamion(IDCliente);
         --voy hasta el lugar
-        admin.LlegadaCamion(IDCliente);
+        cliente[IDCliente].Atendido();
         end loop;
     end Camion;
 
 begin
-    null;
+    for I in 1..P loop
+        arrCliente.RecibirID(I);
+    end loop;
 end Ej8;
 
-
---Test modification

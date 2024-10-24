@@ -23,7 +23,7 @@ procedure Ej2 is
             SELECT 
                 Empleado.Pedido("datos",Resultado);
                 Put_Line("Recibi la respuesta, me marcho");
-            OR DELAY 0.0;
+            ELSE;
                 Put_Line("Me marcho, no me atendieron por segunda vez");
             END SELECT;
         END SELECT;
